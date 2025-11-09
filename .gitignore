@@ -1,0 +1,45 @@
+# Arquivos intermediários do LaTeX
+*.aux
+*.log
+*.toc
+*.out
+*.lot
+*.lof
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
+*.brf
+*.idx
+*.ilg
+*.ind
+*.glo
+*.gls
+*.ist
+*.acn
+*.acr
+*.alg
+*.loa
+
+# Cache do minted
+_minted-*/
+
+# Artefatos de build (descomente se quiser versionar o PDF)
+*.pdf
+*.ps
+*.dvi
+
+# Arquivos de configuração/saida de ferramentas
+latexmkrc
+*.run.xml
+
+# Arquivos do editor / sistema
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*~

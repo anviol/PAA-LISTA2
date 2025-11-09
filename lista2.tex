@@ -1,0 +1,442 @@
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{xcolor}
+
+\geometry{margin=2.5cm}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Projeto e Análise de Algoritmos}
+\rhead{Lista de Exercícios 2}
+\cfoot{\thepage}
+
+\begin{document}
+
+\begin{center}
+{\LARGE \textbf{Projeto e Análise de Algoritmos}}\\[4pt]
+\textbf{Lista de Exercícios 2}
+\end{center}
+
+\bigskip
+
+\section{Questão 1}
+\subsection{Pergunta}
+\textbf{Pico em vetor unimodal (}complexidade $O(\log n)$\textbf{).}\\
+Seja um vetor $A$ com $n$ inteiros \emph{unimodal}, isto é: existe um índice $p$, $1 \leq p \leq n$, tal que os valores $A[i]$ são crescentes para $1 \leq i \leq p$ e decrescentes para $p+1 \leq i \leq n$. Apresente um algoritmo com complexidade $O(\log n)$ para determinar a entrada com valor de pico $p$. Mostre que seu algoritmo tem a complexidade pedida.
+
+\subsection{Resposta}
+O problema de encontrar o índice de pico $p$ em um vetor unimodal de tamanho $n$ com complexidade $O(\log n)$ é resolvido eficientemente utilizando a estratégia \emph{Dividir para Conquistar} (\emph{Divide and Conquer}), que é a base do algoritmo de busca binária. Algoritmos que dividem o problema em um único subproblema de tamanho $n/b$ e realizam trabalho constante $O(1)$ resultam tipicamente em complexidade logarítmica $O(\log n)$.
+
+\medskip
+\textbf{Algoritmo para Determinar o Pico Unimodal}\\
+O algoritmo a seguir adapta a busca binária, comparando um elemento $A[\textit{mid}]$ com seu vizinho à direita $A[\textit{mid}+1]$ para determinar em qual metade (crescente ou decrescente) o pico se encontra, reduzindo o espaço de busca pela metade em tempo constante.
+
+\medskip
+\begingroup
+\ttfamily
+\begin{flushleft}
+ALGORITMO\_PICO\_UNIMODAL (A, n)\\
+1.\quad low $\leftarrow$ 1\\
+2.\quad high $\leftarrow$ n\\
+3.\quad \textbf{ENQUANTO} low $<$ high\\
+4.\qquad mid $\leftarrow \left\lfloor\frac{\text{low}+\text{high}}{2}\right\rfloor$ \; (Calcula o índice do meio)\\
+5.\qquad \texttt{// Evita estourar o limite de n. Se mid for o último elemento, ele é o pico.}\\
+6.\qquad \textbf{SE} mid $<$ n \textbf{ENTÃO}\\
+7.\qquad\qquad \texttt{// Se A[mid] < A[mid+1], estamos na parte crescente (ou mid+1 é o pico).}\\
+8.\qquad\qquad \textbf{SE} A[mid] $<$ A[mid+1] \textbf{ENTÃO}\\
+9.\qquad\qquad\qquad low $\leftarrow$ mid + 1\\
+10.\qquad\qquad \textbf{SENÃO}\\
+11.\qquad\qquad\qquad high $\leftarrow$ mid\\
+12.\qquad \textbf{SENÃO}\\
+13.\qquad\qquad \texttt{// Se mid = n, então n é o pico (caso n=1, low=high=1 e o loop não roda; se n>1 e chegamos aqui, n é o pico).}\\
+14.\qquad\qquad high $\leftarrow$ mid\\
+15.\quad \textbf{FIM-ENQUANTO}\\
+16.\quad \textbf{RETORNE} low
+\end{flushleft}
+\endgroup
+
+\medskip
+O índice retornado \texttt{low} (ou \texttt{high}, já que convergem) é o índice de pico $p$.
+
+\medskip
+\textbf{Análise da Complexidade}\\
+O algoritmo proposto tem complexidade $O(\log n)$ porque implementa uma busca binária que reduz o espaço de busca pela metade em cada iteração.
+\begin{itemize}
+  \item \textbf{Recorrência:} $T(n) = T(\lfloor n/2 \rfloor) + O(1)$.
+  \item \textbf{Parâmetros do Teorema Mestre:} $a=1$, $b=2$, $f(n)=O(1)$, então $n^{\log_b a}=1$.
+  \item \textbf{Caso 2 do Teorema Mestre (}com $k=0$\textbf{):} $T(n)=\Theta(\log n)$.
+\end{itemize}
+
+\section{Questão 2}
+\subsection{Pergunta}
+Suponha que lhe seja dada a sequência histórica dos valores de compra/venda de ações de uma empresa nos últimos $n$ dias. Ou seja, para cada dia $i$ ($1 \leq i \leq n$), você tem o preço $p(i)$ de compra/venda de uma unidade de ação. Suponha que deseja-se fazer uma simulação comprando $1{,}000$ unidades em um dia $i_1$ e vendendo todas estas $1{,}000$ unidades em um dia subsequente $i_2$ ($1 \leq i_1 \leq i_2 \leq n$). Deseja-se determinar \textbf{quando} deve-se comprar e vender as ações (dias $i_1$ e $i_2$) de forma a maximizar o lucro obtido, definido como $p(i_2) - p(i_1)$. Apresente um algoritmo com complexidade $O(n\log n)$ para resolver este problema. Mostre que seu algoritmo tem a complexidade pedida.
+
+\subsection{Resposta}
+Este problema, conhecido como o problema de maximizar o lucro na compra e venda de ações, pode ser resolvido com um algoritmo eficiente utilizando a estratégia \emph{Dividir para Conquistar} (Divide and Conquer) para atingir a complexidade de tempo $O(n\log n)$.
+
+O objetivo é maximizar o lucro $L = P[i_2]-P[i_1]$, onde $1 \le i_1 \le i_2 \le n$. O lucro por $1000$ unidades será $1000 \times L$. O foco do algoritmo é encontrar o valor máximo de $L$ e os índices $i_1$ e $i_2$ correspondentes.
+
+\textbf{Algoritmo Dividir para Conquistar.}
+A estratégia de Dividir para Conquistar envolve dividir o problema em subproblemas menores, resolvê-los recursivamente e, em seguida, combinar as soluções.
+\begin{enumerate}[leftmargin=*,itemsep=2pt]
+  \item \textbf{Dividir:} O vetor de preços $P[1..n]$ é dividido em duas metades, esquerda $A$ ($1$ a $\mathrm{mid}$) e direita $B$ ($\mathrm{mid}{+}1$ a $n$).
+  \item \textbf{Conquistar:} O lucro máximo é calculado recursivamente em $A$ e em $B$.
+  \item \textbf{Combinar:} O lucro máximo global pode ocorrer em três cenários:
+  \begin{itemize}
+    \item A compra e a venda ocorrem inteiramente em $A$ (lucro $L_A$).
+    \item A compra e a venda ocorrem inteiramente em $B$ (lucro $L_B$).
+    \item A compra ocorre em $A$ (dia $i_1$) e a venda ocorre em $B$ (dia $i_2$). Neste caso, para maximizar o lucro, $i_1$ deve ser o dia de \emph{menor} preço em $A$, e $i_2$ deve ser o dia de \emph{maior} preço em $B$.
+  \end{itemize}
+\end{enumerate}
+
+\textit{Função Auxiliar:} Para que a etapa de combinação seja eficiente (em tempo $O(1)$), a chamada recursiva deve retornar não apenas o lucro máximo daquele subvetor, mas também o preço mínimo e o preço máximo encontrados nele.
+
+\medskip
+\begingroup
+\ttfamily
+\begin{flushleft}
+ALGORITMO\_MAX\_LUCRO(P, low, high)\\
+1.\quad \textbf{SE} low = high: \textbf{RETORNE} (0, P[low], P[low]) \quad // (Lucro, Mínimo, Máximo)\\
+2.\quad mid $\leftarrow \left\lfloor\frac{\text{low}+\text{high}}{2}\right\rfloor$\\
+3.\quad (L\_A, Min\_A, Max\_A) $\leftarrow$ ALGORITMO\_MAX\_LUCRO(P, low, mid)\\
+4.\quad (L\_B, Min\_B, Max\_B) $\leftarrow$ ALGORITMO\_MAX\_LUCRO(P, mid{+}1, high)\\
+5.\quad // 1. Calcular lucro que cruza a fronteira (Compra em A, Venda em B)\\
+6.\quad L\_Cruzado $\leftarrow$ Max\_B $-$ Min\_A\\
+7.\quad // 2. O lucro máximo é o maior dos três casos\\
+8.\quad L\_Max $\leftarrow$ max(L\_A, L\_B, L\_Cruzado)\\
+9.\quad // 3. Calcular Mínimo e Máximo globais para o nível de recursão superior\\
+10.\quad Min\_Total $\leftarrow$ min(Min\_A, Min\_B)\\
+11.\quad Max\_Total $\leftarrow$ max(Max\_A, Max\_B)\\
+12.\quad \textbf{RETORNE} (L\_Max, Min\_Total, Max\_Total)
+\end{flushleft}
+\endgroup
+
+\medskip
+Para determinar os dias $i_1$ e $i_2$ específicos, o algoritmo precisaria rastrear os índices junto com os valores de lucro, mínimo e máximo, mas a estrutura da recorrência de tempo permanece inalterada.
+
+\textbf{Análise de Complexidade.}
+O algoritmo acima implementa o paradigma Dividir para Conquistar e sua complexidade de tempo $T(n)$ é dada pela seguinte equação de recorrência, onde $n$ é o tamanho do vetor de preços:
+\[
+T(n) = 2T(n/2) + \Theta(1).
+\]
+Esta forma é típica de algoritmos que dividem o problema em dois subproblemas de tamanho $n/2$ e realizam a etapa de combinação em tempo constante $O(1)$.
+
+\textbf{Aplicação do Teorema Mestre:}
+A recorrência $T(n)=2T(n/2)+\Theta(1)$ se encaixa na forma geral do Teorema Mestre $T(n)=aT(n/b)+f(n)$, com:
+\[
+a=2,\quad b=2,\quad f(n)=\Theta(1),\qquad n^{\log_b a} = n^{\log_2 2} = n.
+\]
+Comparamos $f(n)=\Theta(1)$ com $n^{\log_b a}=\Theta(n)$:
+\begin{itemize}
+  \item Como $f(n)=\Theta(1)$ é assintoticamente menor do que $n$, temos $f(n)=O(n^{1-\varepsilon})$ para algum $\varepsilon\in(0,1)$ (por exemplo, $\varepsilon=0{,}9$).
+  \item Portanto, estamos no \emph{Caso 1} do Teorema Mestre, e $T(n)=\Theta(n)$.
+\end{itemize}
+
+\textbf{Revisão do Paradigma D\&C:}
+A recorrência $T(n)=2T(n/2)+\Theta(n)$ é a que geralmente se busca para atingir $O(n\log n)$. Se implementarmos a etapa de combinação para custar $O(n)$ (por exemplo, se o problema não permitisse o retorno de min/max em $O(1)$), a recorrência seria:
+\[
+T(n)=2T(n/2)+\Theta(n).
+\]
+Nesse cenário (como no \emph{mergesort}), com $a=2$, $b=2$ e $f(n)=n$, temos $f(n)=\Theta(n^{\log_b a})$, o \emph{Caso 2} do Teorema Mestre com $k=0$, cuja solução é:
+\[
+T(n)=\Theta\big(n\log n\big).
+\]
+
+\textbf{Conclusão:}
+Embora a implementação estrita que retorna o mínimo e máximo torne a combinação $O(1)$, resultando em $O(n)$, a formulação que realiza a combinação em $O(n)$ leva à recorrência $T(n)=2T(n/2)+\Theta(n)$, produzindo $O(n\log n)$. Assim, existe uma versão por Dividir e Conquistar que atinge a complexidade pedida $O(n\log n)$.
+
+\section{Questão 3}
+\subsection{Pergunta}
+Suponha o problema de concatenação de strings definido como segue. Sejam duas strings $X$ e $Y$ sobre um alfabeto $S$ fixo, então $XY$ denota a string obtida pela concatenação de $X$ seguida por $Y$. Sejam uma string alvo $A$ consistindo de $m$ caracteres e um conjunto $L$ de $k$ strings mais curtas, cada um com comprimento no máximo $n$ ($n < m$). Deseja-se determinar uma sequência $B_1,B_2,\ldots,B_\ell$ onde cada $B_i$ pertença ao conjunto $L$ (repetições são permitidas, ou seja, pode-se ter $B_i=B_j$) de forma que o custo de alinhamento do string que resulta da concatenação $B_1,B_2,\ldots,B_\ell$ com o string alvo $A$ seja o mínimo possível. Para fins de cálculo suponha que, dados dois índices $t,j$ da string alvo $A$ e um string $B_i$ do conjunto $L$, o custo de alinhamento da substring $A[t..j]$ com $B_i$ seja $c(t,j,B_i)$.
+
+\subsection{Resposta}
+Queremos montar a string alvo $A[1..m]$ concatenando peças $B \in L$ (com repetição). 
+Alinhar um bloco $A[i..j]$ com $B$ custa $c(i,j,B)$. 
+Objetivo: minimizar o custo total.
+
+\medskip
+\textbf{DP (subproblema):}
+Defina $\mathrm{OPT}[j]$ = menor custo para formar o prefixo $A[1..j]$.
+Resposta final: $\mathrm{OPT}[m]$.
+
+\medskip
+\textbf{Pré-cálculo de custos:}
+Para todo $1 \le i \le j \le m$, defina
+\[
+C(i,j) \;=\; \min_{B \in L} \, c(i,j,B).
+\]
+
+\medskip
+\textbf{Recorrência:}
+Para cada $j$,
+\[
+\mathrm{OPT}[j] \;=\; \min_{1 \le i \le j} \big( \mathrm{OPT}[i-1] + C(i,j) \big).
+\]
+
+\medskip
+\textbf{Base:}
+\[
+\mathrm{OPT}[0] = 0.
+\]
+
+\medskip
+\textbf{Algoritmo:}
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item Pré-calcule $C(i,j)$ para todo $1 \le i \le j \le m$ (varrendo todas as $B \in L$).
+  \item $\mathrm{OPT}[0]\gets 0$.
+  \item Para $j=1..m$:
+    \[
+    \mathrm{OPT}[j] \gets \min_{i=1..j}\big(\mathrm{OPT}[i-1] + C(i,j)\big).
+    \]
+  \item (Opcional) Guarde, para cada $j$, o $i$ que minimiza a expressão (e qual $B$ atingiu $C(i,j)$) para reconstruir $B_1,\dots,B_\ell$.
+\end{enumerate}
+
+\medskip
+\textbf{Complexidade (típica).}
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item Pré-cálculo: $C(i,j)$ para $O(m^2)$ pares; custo $\displaystyle O\!\big(m^2 \cdot |L| \cdot \text{custo}(c)\big)$ no ingênuo.
+  \item DP: $O(m^2)$ após $C(i,j)$.
+\end{itemize}
+
+\section{Questão 4}
+\subsection{Pergunta}
+Suponha que um grupo de amigos estejam planejando uma expedição para escalar o Pico Aconcágua. Eles têm um mapa com a trilha do ponto de partida até o pico (total de $L$ km) bem como uma lista de $n$ potenciais pontos de descanso $p_1, p_2, \ldots, p_n$ onde eles podem passar a noite. Cada ponto $p_i$ está a uma distância $x_i$ do início da trilha. O objetivo é caminhar o máximo cada dia (mas não mais que $d$ km), mas somente antes do entardecer. Os amigos projetaram o seguinte algoritmo para determinar o quanto eles vão caminhar em cada dia: Toda vez que eles chegarem em um potencial ponto de descanso $p_i$, eles determinam se poderão chegar ao próximo ponto ($p_{i+1}$) antes do entardecer. Caso afirmativo, eles continuam a caminhada; caso contrário, eles param. Dada a experiência e conhecimento do grupo, pode-se assumir que eles conseguirão fazer esta inferência com bastante precisão. Considerando que dois potenciais pontos de descanso consecutivos estejam a uma distância máxima de $d$ km (caso contrário não há solução), prove que o algoritmo projetado minimiza o número de paradas noturnas respeitando a restrição de somente caminharem antes do entardecer.
+
+\subsection{Resposta}
+Este problema é clássico de otimização e admite solução com \emph{Algoritmo Guloso} (Greedy).
+A regra é: em cada dia, avançar até o \emph{ponto de descanso viável mais distante} sem ultrapassar $d$ km.
+Mostramos que essa regra minimiza o número de paradas.
+
+\medskip
+\textbf{Prova de Otimalidade (Argumento de Troca / ``Greedy stays ahead'').}
+
+\textbf{1) Definições.}
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item $G=\{g_1,g_2,\dots,g_k\}$: sequência de paradas escolhidas pelo algoritmo guloso, onde $g_i$ é o ponto de descanso ao fim do dia $i$.
+  \item $O=\{o_1,o_2,\dots,o_m\}$: uma sequência ótima (mínimo número de paradas), com $m \le k$ por definição.
+  \item $x_0$ é o ponto de partida (distância $0$). A cada dia, a distância percorrida deve ser $\le d$.
+\end{itemize}
+
+\textbf{2) Invariante ``o guloso se mantém à frente''.}
+O guloso escolhe, a partir de $x_{i-1}$, o ponto $g_i$ mais distante com $g_i - x_{i-1} \le d$.
+Provaremos por indução que, para cada $i$, vale $g_i \ge o_i$.
+
+\emph{Base ($i=1$).} $g_1$ é o ponto mais distante a $\le d$ de $x_0$; qualquer $o_1$ viável também está a $\le d$ de $x_0$. Logo $g_1 \ge o_1$.
+
+\emph{Passo indutivo.} Suponha $g_i \ge o_i$. Como $o_{i+1}$ é viável a partir de $o_i$, então
+\[
+o_{i+1} - o_i \le d \;\;\Rightarrow\;\; o_{i+1} - g_i \le o_{i+1} - o_i \le d,
+\]
+ou seja, $o_{i+1}$ também é viável a partir de $g_i$. Como o guloso escolhe $g_{i+1}$ como \emph{o} viável mais distante a partir de $g_i$, conclui-se $g_{i+1} \ge o_{i+1}$.
+
+\textbf{3) Conclusão.}
+Como $g_i \ge o_i$ para todo $i$, o guloso nunca fica atrás da solução ótima na posição após cada parada.
+Se $O$ atinge o destino $L$ em $m$ paradas, então $G$ atinge pelo menos a posição $o_m \approx L$ em $m$ paradas (ou menos).
+Logo, o número de paradas do guloso $k$ satisfaz $k \le m$.
+Como $m$ é o mínimo possível, segue $k = m$.
+Portanto, o algoritmo guloso (avançar ao ponto viável mais distante $\le d$) \textbf{minimiza} o número de paradas noturnas.
+
+\section{Questão 5}
+\subsection{Pergunta}
+Você e seus amigos estão abrindo uma empresa de segurança que precisa obter as licenças de $n$ softwares de criptografia diferentes. Devido a regulações existentes, você pode comprar no máximo uma licença por mês. Ou seja, você demorará necessariamente $n$ meses para comprar todas as licenças. O problema a ser resolvido é a ordem em que as licenças serão compradas. Cada licença atualmente está à venda pelo preço de R\$ 100, mas os preços estão crescendo a uma taxa exponencial: o preço da licença $j$ cresce por um fator $r_j > 1$ a cada mês, onde $r_j$ é conhecido. Isto implica que, se a licença $j$ for comprada em $t$ meses, ela custará R\$ $100 \cdot (r_j)^t$. Assuma que todas as taxas de crescimento sejam distintas, mesmo que os preços de todas as $n$ licenças sejam inicialmente idênticos (R\$ 100). Apresente um algoritmo polinomial na entrada $n$ que determine a ordem em que as licenças devem ser compradas de forma a minimizar o valor total gasto na compra. Prove que seu algoritmo é ótimo.
+
+\subsection{Resposta}
+Este problema é um caso clássico de sequenciamento que admite solução ótima por
+\emph{Algoritmo Guloso} (Greedy). Para minimizar o custo total, licenças com maiores
+taxas de crescimento $r_j$ devem ser compradas \emph{antes} (menor $t$), pois a penalidade
+tem fator exponencial no tempo.
+
+\medskip
+\textbf{Critério Guloso.} Compre as licenças em \textbf{ordem decrescente} de $r_j$.
+
+\medskip
+\textbf{Algoritmo.}
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item \textbf{Entrada:} $R=\{r_1,r_2,\dots,r_n\}$ (taxas de crescimento, $r_j>1$).
+  \item \textbf{Ordenar:} reordene para $r'_1 \ge r'_2 \ge \cdots \ge r'_n$.
+  \item \textbf{Atribuir:} compre a licença com taxa $r'_t$ no mês $t$ ($t=1,\dots,n$).
+  \item \textbf{Saída:} a sequência $r'_1,r'_2,\dots,r'_n$ é a ordem ótima de compra.
+\end{enumerate}
+
+\medskip
+\textbf{Complexidade.}
+O custo é dominado pela ordenação: $T(n)=2T(n/2)+\Theta(n)\Rightarrow O(n\log n)$.
+
+\medskip
+\textbf{Prova de Otimalidade (Argumento de Troca).}
+Seja o custo total
+\[
+T \;=\; 100 \sum_{t=1}^{n} \big(r_{p_t}\big)^{t} \quad\Rightarrow\quad
+\text{minimizamos } T'=\sum_{t=1}^{n} \big(r_{p_t}\big)^{t}
+\]
+(pois $100$ é constante). Suponha, por contradição, uma solução ótima $O$ que viola a
+ordem gulosa: existem meses adjacentes $t$ e $t{+}1$ com licenças $A$ e $B$ tais que
+$r_A<r_B$, mas $A$ é comprada antes de $B$.
+
+O custo parcial em $O$ para esses dois meses é
+\[
+C'(O) \;=\; r_A^{\,t} + r_B^{\,t+1}.
+\]
+Troque $A$ e $B$, obtendo $O'$: $B$ no mês $t$ e $A$ no mês $t{+}1$. O novo custo parcial é
+\[
+C'(O') \;=\; r_B^{\,t} + r_A^{\,t+1}.
+\]
+Considere a diferença
+\[
+D \;=\; C'(O) - C'(O') \;=\; \big(r_A^{\,t} + r_B^{\,t+1}\big) - \big(r_B^{\,t} + r_A^{\,t+1}\big)
+\;=\; r_B^{\,t}\,(r_B-1) - r_A^{\,t}\,(r_A-1).
+\]
+Como $r_B>r_A>1$ e $t\ge 1$, temos $r_B^{\,t}>r_A^{\,t}$ e $(r_B-1)>(r_A-1)>0$, logo
+\[
+r_B^{\,t}(r_B-1) \;>\; r_A^{\,t}(r_A-1) \;\;\Rightarrow\;\; D>0
+\;\;\Rightarrow\;\; C'(O') < C'(O).
+\]
+Portanto, a troca reduz o custo, contrariando a otimalidade de $O$. Assim, nenhuma solução
+ótima possui pares adjacentes fora da \emph{ordem decrescente de $r_j$}, e a estratégia gulosa
+(acima) é \textbf{ótima}.
+
+\section{Questão 6}
+\subsection{Pergunta}
+Apresente um algoritmo com complexidade $O(\log n)$ para resolver o seguinte problema: Dada uma sequência de números $S=\{x_1, x_2, \ldots, x_n\}$ em que a diferença entre dois números consecutivos é constante, encontre o número que está faltando na sequência. Derive a complexidade do seu algoritmo e mostre que ela atende o enunciado.
+
+\subsection{Resposta}
+Podemos resolver em $O(\log n)$ com \emph{Dividir para Conquistar} via \emph{busca binária}.
+A sequência $S[1..n]$ é uma P.A. com diferença constante $D$ e \emph{um} termo faltando (assumimos
+que $x_1=S[1]$ e $x_n=S[n]$ estão presentes).
+
+\medskip
+\textbf{Diferença da P.A.}
+\[
+D \leftarrow 
+\begin{cases}
+S[2]-S[1], & \text{se } S[2]-S[1] = S[n]-S[n-1] \text{ ou próximo disso}\\[2pt]
+S[n]-S[n-1], & \text{caso contrário (para robustez)}
+\end{cases}
+\]
+(\emph{Observação:} com um único termo faltando, ambos os deltas adjacentes a extremidades
+costumam refletir $D$.)
+
+\medskip
+\textbf{Ideia da busca.}
+Em uma P.A. completa, o valor \emph{esperado} na posição $i$ seria
+\[
+E(i) \;=\; S[1] + (i-1)\cdot D.
+\]
+O primeiro índice $i$ em que $S[i] \ne E(i)$ aponta a posição onde a sequência “quebra”.
+O termo faltante é exatamente $E(i)$.
+
+\medskip
+\begingroup
+\ttfamily
+\begin{flushleft}
+\textbf{ALGORITMO\_NUMERO\_FALTANDO}$(S, n)$\\
+1.\quad $D \leftarrow$ diferença da P.A. (conforme acima)\\
+2.\quad \textbf{se} $S[n] = S[1] + (n-1)\cdot D$ \textbf{então} \textbf{retorne} $S[n] + D$ \quad // falta no fim\\
+3.\quad low $\leftarrow 1$;\; high $\leftarrow n$\\
+4.\quad \textbf{enquanto} low $<$ high \textbf{faça}\\
+5.\qquad mid $\leftarrow \left\lfloor \dfrac{low + high}{2} \right\rfloor$\\
+6.\qquad $E \leftarrow S[1] + (mid-1)\cdot D$ \quad // esperado em $mid$\\
+7.\qquad \textbf{se} $S[mid] = E$ \textbf{então} low $\leftarrow$ mid $+ 1$ \quad // falta à direita\\
+8.\qquad \textbf{senão} high $\leftarrow$ mid \quad\quad\quad\quad\;\; // falta à esquerda ou em $mid$\\
+9.\quad \textbf{retorne} $S[1] + (low-1)\cdot D$ \quad // valor do termo faltante
+\end{flushleft}
+\endgroup
+
+\medskip
+\textbf{Corretude (esboço).}
+Se $S[mid]=E(mid)$, então as posições $\le mid$ coincidem com a P.A. completa e a falta está
+em $(mid{+}1)..n$; caso contrário, a primeira divergência está em $\le mid$. O laço mantém esse
+invariante e converge para o primeiro índice divergente $low$, cujo esperado $E(low)$ é o termo faltante.
+O caso “falta no fim” é tratado na linha 2.
+
+\medskip
+\textbf{Complexidade.}
+Cada iteração faz trabalho $O(1)$ e reduz o intervalo pela metade:
+\[
+T(n) = T\!\left(\frac{n}{2}\right) + O(1)
+\;\;\Rightarrow\;\; T(n)=O(\log n).
+\]
+
+\section{Questão 7}
+\subsection{Pergunta}
+Suponha que você seja responsável por determinar a implantação de vários pontos de pedágio ao longo dos $X$ km de extensão da rodovia BR123. Os possíveis pontos de implantação de pedágio são dados como uma sequência de números, $x_1, x_2, \ldots, x_n$, cada um no intervalo $[0,X]$, especificando uma posição em algum km da rodovia. Os valores a serem cobrados em cada pedágio dependem da exata localização do mesmo, ou seja, um pedágio implantado na localização $x_i$ irá cobrar R\$ $r_i > 0$. Deseja-se maximizar o valor cobrado ao longo de toda a rodovia. Porém, dois pontos de pedágio não podem ser implantados muito próximos: deve existir uma distância mínima de 10 km entre dois pedágios sucessivos. Apresente um algoritmo polinomial que recebe como entrada a sequência de números $x_1, x_2, \ldots, x_n$ e os respectivos valores $r_1, r_2, \ldots, r_n$ e retorne o maior valor que pode ser cobrado com implantações de pedágios válidos ao longo da rodovia \emph{e} as localizações desses pedágios.
+
+\subsection{Resposta}
+Maximizar a soma dos pedágios com restrição de distância mínima (10 km) pode ser
+resolvido eficientemente por \emph{Programação Dinâmica}, no estilo de
+\emph{Weighted Interval Scheduling}.
+
+\medskip
+\textbf{1) Modelagem e pré-processamento}
+\begin{enumerate}[leftmargin=*, itemsep=2pt]
+  \item \textbf{Ordenação.} Dado o conjunto de pontos $(x_i,r_i)$, ordene por posição:
+  \[
+  P'=\{(x'_1,r'_1),\dots,(x'_n,r'_n)\}\quad \text{com}\quad x'_1 \le \cdots \le x'_n.
+  \]
+  \item \textbf{Predecessor compatível $p[j]$.} Para cada $j$, defina
+  \[
+  p[j] \;=\; \max\{\, i<j \;:\; x'_j - x'_i \ge 10 \,\}, \quad \text{e } p[j]=0 \text{ se não existir tal } i.
+  \]
+  (Pode ser obtido por busca binária sobre $x'_1,\dots,x'_{j-1}$.)
+\end{enumerate}
+
+\medskip
+\textbf{2) DP (Equação de Bellman)}
+Defina $\mathrm{OPT}[j]$ como o valor máximo considerando apenas $\{(x'_1,r'_1),\dots,(x'_j,r'_j)\}$.
+Para cada $j$,
+\[
+\mathrm{OPT}[j] \;=\; \max\Big\{\, \mathrm{OPT}[j-1], \; r'_j + \mathrm{OPT}[\,p[j]\,] \,\Big\},
+\qquad \mathrm{OPT}[0]=0.
+\]
+
+\medskip
+\textbf{3) Algoritmo (bottom-up)}
+\begingroup
+\ttfamily
+\begin{flushleft}
+\textbf{ALGORITMO\_MAXIMIZA\_PEDAGIO}$(X,R,n)$\\
+1.\quad Forme pares $(x_i,r_i)$ e ordene por $x_i \Rightarrow (x'_j,r'_j)$\\
+2.\quad Para $j=1..n$: compute $p[j]$ por busca binária\\
+3.\quad $\mathrm{OPT}[0]\gets 0$;\; (\textit{opcional}) $S[0]\gets$ ``excluir''\\
+4.\quad Para $j=1..n$:\\
+\phantom{4.}\quad\quad $a \gets \mathrm{OPT}[j-1]$ \quad // excluir $j$\\
+\phantom{4.}\quad\quad $b \gets r'_j + \mathrm{OPT}[p[j]]$ \quad // incluir $j$\\
+\phantom{4.}\quad\quad \textbf{se } $b \ge a$ \textbf{ então } $\mathrm{OPT}[j]\gets b$, $S[j]\gets$ ``incluir'' \textbf{ senão } $\mathrm{OPT}[j]\gets a$, $S[j]\gets$ ``excluir''\\
+5.\quad \textbf{return} $\mathrm{OPT}[n]$ e \textit{traceback} por $S[\cdot]$ e $p[\cdot]$\\[2pt]
+\textit{// Reconstrução}\\
+6.\quad $j\gets n$;\; Lista $\gets \emptyset$\\
+7.\quad \textbf{enquanto } $j>0$ \textbf{ faça }\\
+\phantom{7.}\quad\quad \textbf{se } $S[j]=$ ``incluir'' \textbf{ então } adicionar $(x'_j,r'_j)$ à Lista;\; $j\gets p[j]$\\
+\phantom{7.}\quad\quad \textbf{senão } $j\gets j-1$\\
+8.\quad \textbf{return} $\mathrm{OPT}[n]$, Lista (em ordem crescente de $x'$)
+\end{flushleft}
+\endgroup
+
+\medskip
+\textbf{4) Complexidade}
+\begin{itemize}[leftmargin=*, itemsep=2pt]
+  \item Ordenação: $O(n\log n)$.
+  \item Cálculo de $p[j]$ por busca binária (para todos os $j$): $\sum_{j=1}^{n} O(\log j) = O(n\log n)$.
+  \item DP e reconstrução: $O(n)$.
+\end{itemize}
+Tempo total:
+\[
+T(n) \;=\; O(n\log n) + O(n\log n) + O(n) \;=\; O(n\log n).
+\]
+Portanto, a solução é polinomial e eficiente.
+
+\end{document}
